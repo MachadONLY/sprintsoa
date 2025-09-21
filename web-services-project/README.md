@@ -1,5 +1,10 @@
 # Sistema de Gerenciamento de Produtos - Web Services
 
+# Gabriel teixeira machado rm551570
+# Guilherme Brazioli rm98237
+# Felipe Bressane rm97688
+# Camila do Prado Padalino rm98316
+
 ## Descrição do Projeto
 
 A aplicação consiste em um sistema de gerenciamento de produtos e categorias que expõe funcionalidades através de Web Services RESTful, seguindo as melhores práticas de desenvolvimento de software e arquitetura de sistemas.
