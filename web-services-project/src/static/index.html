@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gerenciamento de Produtos - Web Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom-color: #007bff;
+            color: #007bff;
+        }
+
+        .tab-content {
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .response-area {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .success {
+            color: #28a745;
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .item-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .item-info p {
+            color: #6c757d;
+            margin: 2px 0;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-ativo {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inativo {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-descontinuado {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Gerenciamento de Produtos</h1>
+            <p>Interface para consumo de Web Services - Arquitetura Orientada a Serviços</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('categorias')">Categorias</button>
+            <button class="nav-tab" onclick="showTab('produtos')">Produtos</button>
+            <button class="nav-tab" onclick="showTab('teste')">Teste de API</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Tab Categorias -->
+            <div id="categorias" class="tab-pane active">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Criar Categoria</h3>
+                        <form id="formCategoria">
+                            <div class="form-group">
+                                <label for="categoriaNome">Nome:</label>
+                                <input type="text" id="categoriaNome" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoriaDescricao">Descrição:</label>
+                                <textarea id="categoriaDescricao" class="form-control" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Criar Categoria</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Listar Categorias</h3>
+                        <button onclick="listarCategorias()" class="btn btn-success">Carregar Categorias</button>
+                        <div id="listaCategorias" class="item-list" style="margin-top: 15px;">
+                            <p>Clique em "Carregar Categorias" para ver a lista</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="response-area" id="responseCategorias"></div>
+            </div>
+
+            <!-- Tab Produtos -->
+            <div id="produtos" class="tab-pane">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Criar Produto</h3>
+                        <form id="formProduto">
+                            <div class="form-group">
+                                <label for="produtoNome">Nome:</label>
+                                <input type="text" id="produtoNome" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="produtoDescricao">Descrição:</label>
+                                <textarea id="produtoDescricao" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="produtoPreco">Preço:</label>
+                                <input type="number" id="produtoPreco" class="form-control" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="produtoEstoque">Estoque:</label>
+                                <input type="number" id="produtoEstoque" class="form-control" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="produtoCategoria">Categoria:</label>
+                                <select id="produtoCategoria" class="form-control" required>
+                                    <option value="">Selecione uma categoria</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Criar Produto</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Listar Produtos</h3>
+                        <div class="form-group">
+                            <label for="filtroCategoria">Filtrar por Categoria:</label>
+                            <select id="filtroCategoria" class="form-control">
+                                <option value="">Todas as categorias</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filtroStatus">Filtrar por Status:</label>
+                            <select id="filtroStatus" class="form-control">
+                                <option value="">Todos os status</option>
+                                <option value="ATIVO">Ativo</option>
+                                <option value="INATIVO">Inativo</option>
+                                <option value="DESCONTINUADO">Descontinuado</option>
+                            </select>
+                        </div>
+                        <button onclick="listarProdutos()" class="btn btn-success">Carregar Produtos</button>
+                        <div id="listaProdutos" class="item-list" style="margin-top: 15px;">
+                            <p>Clique em "Carregar Produtos" para ver a lista</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="response-area" id="responseProdutos"></div>
+            </div>
+
+            <!-- Tab Teste -->
+            <div id="teste" class="tab-pane">
+                <div class="card">
+                    <h3>Teste Manual de API</h3>
+                    <div class="form-group">
+                        <label for="testeUrl">URL:</label>
+                        <input type="text" id="testeUrl" class="form-control" value="/api/categorias" placeholder="/api/endpoint">
+                    </div>
+                    <div class="form-group">
+                        <label for="testeMetodo">Método:</label>
+                        <select id="testeMetodo" class="form-control">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="testeBody">Body (JSON):</label>
+                        <textarea id="testeBody" class="form-control" rows="5" placeholder='{"nome": "Exemplo"}'></textarea>
+                    </div>
+                    <button onclick="testarAPI()" class="btn btn-primary">Enviar Requisição</button>
+                </div>
+                <div class="response-area" id="responseTeste"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let categorias = [];
+        let produtos = [];
+
+        // Função para mostrar tabs
+        function showTab(tabName) {
+            // Esconder todas as tabs
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar tab selecionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Carregar dados se necessário
+            if (tabName === 'produtos') {
+                carregarCategoriasParaSelect();
+            }
+        }
+
+        // Função para fazer requisições HTTP
+        async function fazerRequisicao(url, metodo = 'GET', dados = null) {
+            const opcoes = {
+                method: metodo,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (dados) {
+                opcoes.body = JSON.stringify(dados);
+            }
+
+            try {
+                const response = await fetch(url, opcoes);
+                const resultado = await response.json();
+                return { sucesso: response.ok, dados: resultado, status: response.status };
+            } catch (error) {
+                return { sucesso: false, erro: error.message };
+            }
+        }
+
+        // Função para mostrar resposta
+        function mostrarResposta(elementoId, resposta) {
+            const elemento = document.getElementById(elementoId);
+            elemento.className = 'response-area ' + (resposta.sucesso ? 'success' : 'error');
+            elemento.textContent = JSON.stringify(resposta, null, 2);
+        }
+
+        // Funções para Categorias
+        document.getElementById('formCategoria').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                nome: document.getElementById('categoriaNome').value,
+                descricao: document.getElementById('categoriaDescricao').value
+            };
+
+            const resposta = await fazerRequisicao('/api/categorias', 'POST', dados);
+            mostrarResposta('responseCategorias', resposta);
+
+            if (resposta.sucesso) {
+                document.getElementById('formCategoria').reset();
+                listarCategorias();
+            }
+        });
+
+        async function listarCategorias() {
+            const resposta = await fazerRequisicao('/api/categorias');
+            mostrarResposta('responseCategorias', resposta);
+
+            if (resposta.sucesso) {
+                categorias = resposta.dados.dados;
+                atualizarListaCategorias();
+                carregarCategoriasParaSelect();
+            }
+        }
+
+        function atualizarListaCategorias() {
+            const lista = document.getElementById('listaCategorias');
+            
+            if (categorias.length === 0) {
+                lista.innerHTML = '<p>Nenhuma categoria encontrada</p>';
+                return;
+            }
+
+            lista.innerHTML = categorias.map(categoria => `
+                <div class="item">
+                    <div class="item-info">
+                        <h4>${categoria.nome}</h4>
+                        <p>${categoria.descricao || 'Sem descrição'}</p>
+                        <p><small>ID: ${categoria.id} | Criado: ${new Date(categoria.data_criacao).toLocaleDateString()}</small></p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-warning" onclick="editarCategoria(${categoria.id})">Editar</button>
+                        <button class="btn btn-danger" onclick="excluirCategoria(${categoria.id})">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function excluirCategoria(id) {
+            if (!confirm('Tem certeza que deseja excluir esta categoria?')) return;
+
+            const resposta = await fazerRequisicao(`/api/categorias/${id}`, 'DELETE');
+            mostrarResposta('responseCategorias', resposta);
+
+            if (resposta.sucesso) {
+                listarCategorias();
+            }
+        }
+
+        function carregarCategoriasParaSelect() {
+            const selects = ['produtoCategoria', 'filtroCategoria'];
+            
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                const valorAtual = select.value;
+                
+                // Manter primeira opção
+                const primeiraOpcao = select.querySelector('option').outerHTML;
+                select.innerHTML = primeiraOpcao;
+                
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.id;
+                    option.textContent = categoria.nome;
+                    select.appendChild(option);
+                });
+                
+                select.value = valorAtual;
+            });
+        }
+
+        // Funções para Produtos
+        document.getElementById('formProduto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                nome: document.getElementById('produtoNome').value,
+                descricao: document.getElementById('produtoDescricao').value,
+                preco: parseFloat(document.getElementById('produtoPreco').value),
+                estoque: parseInt(document.getElementById('produtoEstoque').value),
+                categoria_id: parseInt(document.getElementById('produtoCategoria').value)
+            };
+
+            const resposta = await fazerRequisicao('/api/produtos', 'POST', dados);
+            mostrarResposta('responseProdutos', resposta);
+
+            if (resposta.sucesso) {
+                document.getElementById('formProduto').reset();
+                listarProdutos();
+            }
+        });
+
+        async function listarProdutos() {
+            let url = '/api/produtos';
+            const params = new URLSearchParams();
+            
+            const categoriaId = document.getElementById('filtroCategoria').value;
+            const status = document.getElementById('filtroStatus').value;
+            
+            if (categoriaId) params.append('categoria_id', categoriaId);
+            if (status) params.append('status', status);
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+
+            const resposta = await fazerRequisicao(url);
+            mostrarResposta('responseProdutos', resposta);
+
+            if (resposta.sucesso) {
+                produtos = resposta.dados.dados;
+                atualizarListaProdutos();
+            }
+        }
+
+        function atualizarListaProdutos() {
+            const lista = document.getElementById('listaProdutos');
+            
+            if (produtos.length === 0) {
+                lista.innerHTML = '<p>Nenhum produto encontrado</p>';
+                return;
+            }
+
+            lista.innerHTML = produtos.map(produto => `
+                <div class="item">
+                    <div class="item-info">
+                        <h4>${produto.nome}</h4>
+                        <p>${produto.descricao || 'Sem descrição'}</p>
+                        <p><strong>Preço:</strong> R$ ${produto.preco.toFixed(2)} | <strong>Estoque:</strong> ${produto.estoque}</p>
+                        <p><strong>Categoria:</strong> ${produto.categoria} | <span class="status-badge status-${produto.status.toLowerCase()}">${produto.status}</span></p>
+                        <p><small>ID: ${produto.id} | Criado: ${new Date(produto.data_criacao).toLocaleDateString()}</small></p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-warning" onclick="editarProduto(${produto.id})">Editar</button>
+                        <button class="btn btn-danger" onclick="excluirProduto(${produto.id})">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function excluirProduto(id) {
+            if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+
+            const resposta = await fazerRequisicao(`/api/produtos/${id}`, 'DELETE');
+            mostrarResposta('responseProdutos', resposta);
+
+            if (resposta.sucesso) {
+                listarProdutos();
+            }
+        }
+
+        // Função para teste manual de API
+        async function testarAPI() {
+            const url = document.getElementById('testeUrl').value;
+            const metodo = document.getElementById('testeMetodo').value;
+            const bodyText = document.getElementById('testeBody').value;
+            
+            let dados = null;
+            if (bodyText && (metodo === 'POST' || metodo === 'PUT')) {
+                try {
+                    dados = JSON.parse(bodyText);
+                } catch (e) {
+                    mostrarResposta('responseTeste', { sucesso: false, erro: 'JSON inválido no body' });
+                    return;
+                }
+            }
+
+            const resposta = await fazerRequisicao(url, metodo, dados);
+            mostrarResposta('responseTeste', resposta);
+        }
+
+        // Carregar dados iniciais
+        document.addEventListener('DOMContentLoaded', () => {
+            listarCategorias();
+        });
+    </script>
+</body>
+</html>

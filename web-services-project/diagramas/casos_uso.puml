@@ -1,0 +1,76 @@
+@startuml Casos de Uso - Sistema de Produtos
+
+title Casos de Uso - Sistema de Gerenciamento de Produtos\nWeb Services e Arquitetura Orientada a Serviços
+
+left to right direction
+
+actor "Usuário Final" as USER
+actor "Sistema Cliente" as CLIENT
+actor "Desenvolvedor" as DEV
+
+rectangle "Sistema de Gerenciamento de Produtos" {
+    
+    package "Gerenciamento de Categorias" {
+        usecase "Criar Categoria" as UC1
+        usecase "Listar Categorias" as UC2
+        usecase "Consultar Categoria" as UC3
+        usecase "Atualizar Categoria" as UC4
+        usecase "Excluir Categoria" as UC5
+    }
+    
+    package "Gerenciamento de Produtos" {
+        usecase "Criar Produto" as UC6
+        usecase "Listar Produtos" as UC7
+        usecase "Consultar Produto" as UC8
+        usecase "Atualizar Produto" as UC9
+        usecase "Excluir Produto" as UC10
+        usecase "Filtrar Produtos" as UC11
+        usecase "Gerenciar Status" as UC12
+        usecase "Controlar Estoque" as UC13
+    }
+    
+    package "Interface Web" {
+        usecase "Acessar Interface" as UC14
+        usecase "Visualizar Dados" as UC15
+        usecase "Testar API" as UC16
+    }
+    
+    package "Web Services" {
+        usecase "Consumir API REST" as UC17
+        usecase "Validar Dados" as UC18
+        usecase "Tratar Erros" as UC19
+        usecase "Padronizar Respostas" as UC20
+    }
+}
+
+' Relacionamentos do Usuário Final
+USER --> UC14
+USER --> UC1
+USER --> UC2
+USER --> UC6
+USER --> UC7
+USER --> UC15
+USER --> UC16
+
+' Relacionamentos do Sistema Cliente
+CLIENT --> UC17
+CLIENT --> UC1
+CLIENT --> UC2
+CLIENT --> UC6
+CLIENT --> UC7
+
+' Relacionamentos do Desenvolvedor
+DEV --> UC16
+DEV --> UC17
+DEV --> UC19
+
+' Dependências
+UC1 ..> UC18 : include
+UC6 ..> UC18 : include
+UC1 ..> UC20 : include
+UC2 ..> UC20 : include
+UC6 ..> UC20 : include
+UC7 ..> UC20 : include
+
+@enduml
+

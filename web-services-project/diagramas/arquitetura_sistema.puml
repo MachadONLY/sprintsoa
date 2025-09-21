@@ -1,0 +1,101 @@
+@startuml Arquitetura do Sistema - Web Services
+
+title Arquitetura do Sistema de Gerenciamento de Produtos\nArquitetura Orientada a Serviços e Web Services
+
+package "Camada de Apresentação" {
+    class "Interface Web" as UI {
+        + HTML/CSS/JavaScript
+        + Formulários Interativos
+        + Consumo de APIs
+        + Validação Client-side
+    }
+    
+    class "Cliente HTTP" as HTTP_CLIENT {
+        + Postman
+        + cURL
+        + Outras Aplicações
+    }
+}
+
+package "Camada de Web Services" {
+    class "Flask Application" as FLASK {
+        + Servidor Web
+        + Roteamento HTTP
+        + Middleware CORS
+        + Tratamento de Erros
+    }
+    
+    class "Controladores REST" as CONTROLLERS {
+        + produto.py
+        + user.py
+        + Endpoints CRUD
+        + Validação de Entrada
+    }
+    
+    class "Utilitários" as UTILS {
+        + ResponseUtils
+        + Error Handlers
+        + Padronização de Respostas
+    }
+}
+
+package "Camada de Lógica de Negócio" {
+    class "Serviços" as SERVICES {
+        + ProdutoService
+        + CategoriaService
+        + Regras de Negócio
+        + Validações Complexas
+    }
+    
+    class "DTOs" as DTOS {
+        + CriarProdutoDTO
+        + AtualizarProdutoDTO
+        + CriarCategoriaDTO
+        + AtualizarCategoriaDTO
+        + Validação de Dados
+    }
+}
+
+package "Camada de Acesso a Dados" {
+    class "Modelos ORM" as MODELS {
+        + Produto
+        + Categoria
+        + StatusProduto (Enum)
+        + Relacionamentos
+    }
+    
+    class "SQLAlchemy ORM" as ORM {
+        + Mapeamento Objeto-Relacional
+        + Query Builder
+        + Transações
+        + Migrações
+    }
+}
+
+package "Camada de Persistência" {
+    class "SQLite Database" as DB {
+        + Tabela produtos
+        + Tabela categorias
+        + Tabela users
+    }
+}
+
+' Relacionamentos
+UI --> CONTROLLERS : HTTP Requests
+HTTP_CLIENT --> CONTROLLERS : API Calls
+
+CONTROLLERS --> SERVICES : Chamadas de Métodos
+CONTROLLERS --> UTILS : Formatação de Respostas
+CONTROLLERS --> DTOS : Validação de Entrada
+
+SERVICES --> MODELS : Operações CRUD
+SERVICES --> DTOS : Validação de Negócio
+
+MODELS --> ORM : Definição de Entidades
+ORM --> DB : SQL Queries
+
+FLASK --> CONTROLLERS : Roteamento
+FLASK --> UTILS : Middleware
+
+@enduml
+

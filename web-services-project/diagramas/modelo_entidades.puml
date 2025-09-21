@@ -1,0 +1,119 @@
+@startuml Modelo de Entidades - Sistema de Produtos
+
+!define TABLE entity
+!define PK_COLOR #FFE4B5
+!define FK_COLOR #E6E6FA
+
+title Diagrama de Entidades - Sistema de Gerenciamento de Produtos
+
+TABLE Categoria {
+    * id : INTEGER <<PK>>
+    --
+    * nome : VARCHAR(100) <<UNIQUE>>
+    descricao : TEXT
+    * data_criacao : DATETIME
+}
+
+TABLE Produto {
+    * id : INTEGER <<PK>>
+    --
+    * nome : VARCHAR(200)
+    descricao : TEXT
+    * preco : DECIMAL(10,2)
+    * estoque : INTEGER
+    * status : ENUM(StatusProduto)
+    * categoria_id : INTEGER <<FK>>
+    * data_criacao : DATETIME
+    * data_atualizacao : DATETIME
+}
+
+TABLE User {
+    * id : INTEGER <<PK>>
+    --
+    * username : VARCHAR(80) <<UNIQUE>>
+    * email : VARCHAR(120) <<UNIQUE>>
+}
+
+enum StatusProduto {
+    ATIVO
+    INATIVO
+    DESCONTINUADO
+}
+
+' Relacionamentos
+Categoria ||--o{ Produto : "possui"
+Produto }o--|| StatusProduto : "tem status"
+
+' Anotações
+note right of Categoria
+    Representa as categorias
+    de produtos do sistema.
+    
+    Regras:
+    - Nome único obrigatório
+    - Não pode ser excluída se
+      tiver produtos associados
+end note
+
+note right of Produto
+    Representa os produtos
+    cadastrados no sistema.
+    
+    Regras:
+    - Nome obrigatório
+    - Preço deve ser positivo
+    - Estoque não pode ser negativo
+    - Categoria deve existir
+    - Status padrão é ATIVO
+end note
+
+note right of StatusProduto
+    Enum que define os
+    possíveis status de
+    um produto:
+    
+    - ATIVO: Produto disponível
+    - INATIVO: Produto temporariamente indisponível
+    - DESCONTINUADO: Produto não mais comercializado
+end note
+
+note right of User
+    Entidade de exemplo
+    para demonstração
+    dos Web Services.
+    
+    Implementa CRUD
+    básico de usuários.
+end note
+
+' Constraints e Índices
+note bottom of Categoria
+    Constraints:
+    - nome NOT NULL
+    - nome UNIQUE
+    - data_criacao NOT NULL
+    
+    Índices:
+    - PRIMARY KEY (id)
+    - UNIQUE INDEX (nome)
+end note
+
+note bottom of Produto
+    Constraints:
+    - nome NOT NULL
+    - preco NOT NULL, CHECK (preco >= 0)
+    - estoque NOT NULL, CHECK (estoque >= 0)
+    - categoria_id NOT NULL
+    - status NOT NULL
+    - data_criacao NOT NULL
+    - data_atualizacao NOT NULL
+    
+    Índices:
+    - PRIMARY KEY (id)
+    - FOREIGN KEY (categoria_id) REFERENCES Categoria(id)
+    - INDEX (categoria_id)
+    - INDEX (status)
+end note
+
+@enduml
+
