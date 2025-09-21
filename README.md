@@ -1,9 +1,9 @@
 # Sistema de Gerenciamento de Produtos - Web Services
 
-# Gabriel teixeira machado rm551570
-# Guilherme Brazioli rm98237
-# Felipe Bressane rm97688
-# Camila do Prado Padalino rm98316
+Gabriel teixeira machado rm551570
+Guilherme Brazioli rm98237
+Felipe Bressane rm97688
+Camila do Prado Padalino rm98316
 
 ## Descrição do Projeto
 
